@@ -24,7 +24,7 @@ export default function App() {
   const { toasts, add: toast } = useToast();
 
   const pages = {
-    dashboard: <Dashboard stats={stats} budget={budget} />,
+    dashboard: <Dashboard stats={stats} budget={budget} squad={squad} />,
     tactics: <Tactics squad={squad} setSquad={setSquad} bench={bench} setBench={setBench} toast={toast} />,
     transfers: <Transfers squad={squad} setSquad={setSquad} bench={bench} setBench={setBench} budget={budget} setBudget={setBudget} toast={toast} />,
     match: <Match squad={squad} bench={bench} stats={stats} setStats={setStats} toast={toast} />,

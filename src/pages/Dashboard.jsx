@@ -1,6 +1,6 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { Trophy, CheckCircle2, Target, Calendar, Handshake, XCircle } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Trophy, CheckCircle2, Target, Calendar, Handshake, XCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar
@@ -12,7 +12,7 @@ import { StatBar } from "../components/UI/StatBar";
 import { GoalTarget } from "../components/UI/GoalTarget";
 import { Heatmap } from "../components/UI/Heatmap";
 
-export function Dashboard({ stats, budget }) {
+export function Dashboard({ stats, budget, squad = [] }) {
   const nextOpponent = OPPONENTS[0]; // FC Barcelona
 
   const CARDS = [
@@ -24,15 +24,70 @@ export function Dashboard({ stats, budget }) {
     { label: "Derrotas", value: stats.losses, icon: XCircle, color: "#ef4444" },
   ];
 
-  // Radar data for the AI-Assisted Player Report (Pedri)
-  const pedriRadarData = [
-    { attr: "Ataque", value: 80 },
-    { attr: "Defensa", value: 68 },
-    { attr: "Pase", value: 89 },
-    { attr: "Regate", value: 90 },
-    { attr: "Físico", value: 72 },
-    { attr: "Velocidad", value: 78 },
-  ];
+  // Featured players from squad (those with images)
+  const featuredPlayers = squad.filter(p => p.image);
+  const [featuredIdx, setFeaturedIdx] = useState(0);
+  const [direction, setDirection] = useState(1);
+
+  // Auto-rotate players every 5 seconds
+  useEffect(() => {
+    if (featuredPlayers.length <= 1) return;
+    const interval = setInterval(() => {
+      setDirection(1);
+      setFeaturedIdx(prev => (prev + 1) % featuredPlayers.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [featuredPlayers.length]);
+
+  const activePlayer = featuredPlayers[featuredIdx] || {
+    name: "Pedri",
+    pos: "CM",
+    rating: 88,
+    image: "/players/pedri.png",
+    stats: { sho: 80, def: 68, pas: 89, dri: 90, phy: 72, pac: 78 }
+  };
+
+  const getRadarData = (player) => {
+    const s = player.stats || {};
+    return [
+      { attr: "Ataque", value: s.sho || 75 },
+      { attr: "Defensa", value: s.def || 75 },
+      { attr: "Pase", value: s.pas || 75 },
+      { attr: "Regate", value: s.dri || 75 },
+      { attr: "Físico", value: s.phy || 75 },
+      { attr: "Velocidad", value: s.pac || 75 },
+    ];
+  };
+
+  const nextPlayer = () => {
+    if (featuredPlayers.length <= 1) return;
+    setDirection(1);
+    setFeaturedIdx(prev => (prev + 1) % featuredPlayers.length);
+  };
+
+  const prevPlayer = () => {
+    if (featuredPlayers.length <= 1) return;
+    setDirection(-1);
+    setFeaturedIdx(prev => (prev - 1 + featuredPlayers.length) % featuredPlayers.length);
+  };
+
+  const slideVariants = {
+    enter: (dir) => ({
+      x: dir > 0 ? 80 : -80,
+      opacity: 0,
+      scale: 0.95
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      scale: 1
+    },
+    exit: (dir) => ({
+      x: dir > 0 ? -80 : 80,
+      opacity: 0,
+      scale: 0.95
+    })
+  };
 
   // Container variants for stagger animation
   const containerVariants = {
@@ -152,48 +207,146 @@ export function Dashboard({ stats, budget }) {
         </motion.div>
 
         {/* Center Column: AI-Assisted Player Report (FUT Details & Radar) */}
-        <motion.div variants={itemVariants}>
+        <motion.div variants={itemVariants} className="relative group">
           <GlassCard className="p-5 h-full flex flex-col justify-between relative overflow-hidden" glow="#3b82f6">
             <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/5 rounded-full filter blur-3xl pointer-events-none" />
             
             <div>
-              <h3 className="text-sm font-bold text-white/70 uppercase tracking-wider mb-2">
+              <h3 className="text-sm font-bold text-white/70 uppercase tracking-wider mb-1">
                 AI-Assisted Player Report
               </h3>
-              <p className="text-xs text-white/40 mb-4">Análisis detallado de rendimiento individual (Estrella Destacada)</p>
+              <p className="text-xs text-white/40">Análisis detallado de rendimiento individual (Estrella Destacada)</p>
+
+              {/* Player Quick Select Badges */}
+              {featuredPlayers.length > 1 && (
+                <div className="flex items-center justify-center gap-2.5 my-3 pb-2.5 border-b border-white/5 overflow-x-auto no-scrollbar">
+                  {featuredPlayers.map((player, idx) => {
+                    const isActive = featuredIdx === idx;
+                    return (
+                      <button
+                        key={player.id || player.name}
+                        onClick={() => {
+                          setDirection(idx > featuredIdx ? 1 : -1);
+                          setFeaturedIdx(idx);
+                        }}
+                        className="relative group/badge focus:outline-none transition-all duration-300"
+                      >
+                        <div className={`w-9 h-9 rounded-full overflow-hidden border-2 transition-all duration-300 ${
+                          isActive 
+                            ? "border-blue-500 shadow-[0_0_12px_rgba(59,130,246,0.6)] scale-110" 
+                            : "border-white/10 hover:border-white/30 hover:scale-105"
+                        }`}>
+                          {player.image ? (
+                            <img src={player.image} alt={player.name} className="w-full h-full object-cover object-top" />
+                          ) : (
+                            <div className="w-full h-full bg-slate-800 flex items-center justify-center text-[10px] font-bold text-white/60">
+                              {player.pos}
+                            </div>
+                          )}
+                        </div>
+                        {/* Tooltip */}
+                        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 rounded text-[9px] bg-slate-900 border border-white/10 text-white font-bold whitespace-nowrap opacity-0 pointer-events-none group-hover/badge:opacity-100 transition-opacity duration-200 shadow-xl z-30">
+                          {player.name} ({player.pos})
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
-            {/* Pedri Avatar render */}
-            <div className="flex-1 flex flex-col items-center justify-center my-4 relative">
-              <div className="relative w-48 h-48 flex items-center justify-center rounded-full bg-slate-900/40 border border-white/5 overflow-hidden shadow-2xl">
-                <img 
-                  src="/players/pedri.png" 
-                  alt="Pedri" 
-                  className="w-full h-full object-cover object-top scale-105 filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.6)]"
-                />
-              </div>
-              <div className="text-center mt-3">
-                <h4 className="text-base font-extrabold text-white">Pedri</h4>
-                <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest mt-0.5">Centrocampista (CM) · FCB</p>
-              </div>
+            {/* Navigation Chevrons */}
+            {featuredPlayers.length > 1 && (
+              <>
+                <button 
+                  onClick={prevPlayer}
+                  className="absolute left-3 top-[42%] -translate-y-1/2 z-20 text-white/40 hover:text-white transition-colors bg-white/5 border border-white/5 hover:bg-white/10 p-1.5 rounded-full backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+                <button 
+                  onClick={nextPlayer}
+                  className="absolute right-3 top-[42%] -translate-y-1/2 z-20 text-white/40 hover:text-white transition-colors bg-white/5 border border-white/5 hover:bg-white/10 p-1.5 rounded-full backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </>
+            )}
+
+            {/* Animated Player Avatar Area */}
+            <div className="h-44 relative overflow-hidden w-full flex items-center justify-center my-2">
+              <AnimatePresence custom={direction} mode="wait">
+                <motion.div
+                  key={activePlayer.id || activePlayer.name}
+                  custom={direction}
+                  variants={slideVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{
+                    x: { type: "spring", stiffness: 300, damping: 30 },
+                    opacity: { duration: 0.25 }
+                  }}
+                  className="absolute inset-0 flex flex-col items-center justify-center"
+                >
+                  <div className="relative w-28 h-28 flex items-center justify-center rounded-full bg-slate-900/40 border border-white/5 overflow-hidden shadow-2xl">
+                    {activePlayer.image ? (
+                      <img 
+                        src={activePlayer.image} 
+                        alt={activePlayer.name} 
+                        className="w-full h-full object-cover object-top scale-105 filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.6)]"
+                      />
+                    ) : (
+                      <span className="text-5xl opacity-10">👤</span>
+                    )}
+                  </div>
+                  <div className="text-center mt-2">
+                    <h4 className="text-sm font-extrabold text-white">{activePlayer.name}</h4>
+                    <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest mt-0.5">
+                      {activePlayer.pos} · {CLUB.shortName}
+                    </p>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
             </div>
 
-            {/* Player attributes Radar chart */}
+            {/* Radar Chart (Stays mounted, morphs polygon points smoothly) */}
             <div className="flex justify-center">
               <ResponsiveContainer width="100%" height={170}>
-                <RadarChart data={pedriRadarData}>
+                <RadarChart data={getRadarData(activePlayer)}>
                   <PolarGrid stroke="rgba(255,255,255,0.06)" />
                   <PolarAngleAxis dataKey="attr" tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 9, fontWeight: "bold" }} />
                   <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                  <Radar name="Pedri" dataKey="value" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.25} strokeWidth={2} />
+                  <Radar name={activePlayer.name} dataKey="value" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.25} strokeWidth={2} isAnimationActive={true} animationDuration={600} />
                 </RadarChart>
               </ResponsiveContainer>
             </div>
 
-            <div className="mt-4 pt-3 border-t border-white/5 flex justify-between items-center text-[10px] text-white/40">
-              <span>Habilidad Promedio: <strong className="text-white">88</strong></span>
-              <span className="text-blue-400 font-bold uppercase">Estado: Excelente</span>
+            {/* Bottom stats summary (Stays mounted, updates content) */}
+            <div className="mt-3 pt-3 border-t border-white/5 flex justify-between items-center text-[10px] text-white/40">
+              <span>Habilidad Promedio: <strong className="text-white">{activePlayer.rating}</strong></span>
+              <span className="text-blue-400 font-bold uppercase">Estado: {activePlayer.rating >= 88 ? "Excelente" : "Destacado"}</span>
             </div>
+
+            {/* Dots navigation */}
+            {featuredPlayers.length > 1 && (
+              <div className="flex justify-center gap-1.5 mt-3 z-20">
+                {featuredPlayers.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      setDirection(idx > featuredIdx ? 1 : -1);
+                      setFeaturedIdx(idx);
+                    }}
+                    className="w-1.5 h-1.5 rounded-full transition-all duration-300"
+                    style={{
+                      background: featuredIdx === idx ? "#3b82f6" : "rgba(255,255,255,0.2)",
+                      transform: featuredIdx === idx ? "scale(1.2)" : "scale(1)"
+                    }}
+                  />
+                ))}
+              </div>
+            )}
           </GlassCard>
         </motion.div>
 
