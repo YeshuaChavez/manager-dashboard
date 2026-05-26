@@ -212,47 +212,10 @@ export function Dashboard({ stats, budget, squad = [] }) {
             <div className="absolute top-0 right-0 w-48 h-48 bg-blue-500/5 rounded-full filter blur-3xl pointer-events-none" />
             
             <div>
-              <h3 className="text-sm font-bold text-white/70 uppercase tracking-wider mb-1">
+              <h3 className="text-sm font-bold text-white/70 uppercase tracking-wider mb-2">
                 AI-Assisted Player Report
               </h3>
-              <p className="text-xs text-white/40">Análisis detallado de rendimiento individual (Estrella Destacada)</p>
-
-              {/* Player Quick Select Badges */}
-              {featuredPlayers.length > 1 && (
-                <div className="flex items-center justify-center gap-2.5 my-2 px-4 py-2 border-b border-white/5 overflow-x-auto no-scrollbar">
-                  {featuredPlayers.map((player, idx) => {
-                    const isActive = featuredIdx === idx;
-                    return (
-                      <button
-                        key={player.id || player.name}
-                        onClick={() => {
-                          setDirection(idx > featuredIdx ? 1 : -1);
-                          setFeaturedIdx(idx);
-                        }}
-                        className="relative group/badge focus:outline-none transition-all duration-300"
-                      >
-                        <div className={`w-9 h-9 rounded-full overflow-hidden border-2 transition-all duration-300 ${
-                          isActive 
-                            ? "border-blue-500 shadow-[0_0_12px_rgba(59,130,246,0.6)] scale-110" 
-                            : "border-white/10 hover:border-white/30 hover:scale-105"
-                        }`}>
-                          {player.image ? (
-                            <img src={player.image} alt={player.name} className="w-full h-full object-cover object-top" />
-                          ) : (
-                            <div className="w-full h-full bg-slate-800 flex items-center justify-center text-[10px] font-bold text-white/60">
-                              {player.pos}
-                            </div>
-                          )}
-                        </div>
-                        {/* Tooltip */}
-                        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2 py-0.5 rounded text-[9px] bg-slate-900 border border-white/10 text-white font-bold whitespace-nowrap opacity-0 pointer-events-none group-hover/badge:opacity-100 transition-opacity duration-200 shadow-xl z-30">
-                          {player.name} ({player.pos})
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
+              <p className="text-xs text-white/40 mb-2">Análisis detallado de rendimiento individual (Estrella Destacada)</p>
             </div>
 
             {/* Animated Player Avatar Area Wrapper */}
@@ -275,7 +238,7 @@ export function Dashboard({ stats, budget, squad = [] }) {
                 </>
               )}
 
-              <div className="h-44 relative overflow-hidden w-full flex items-center justify-center my-2">
+              <div className="h-56 relative overflow-hidden w-full flex items-center justify-center my-2">
                 <AnimatePresence custom={direction} mode="wait">
                   <motion.div
                     key={activePlayer.id || activePlayer.name}
@@ -290,7 +253,7 @@ export function Dashboard({ stats, budget, squad = [] }) {
                     }}
                     className="absolute inset-0 flex flex-col items-center justify-center"
                   >
-                    <div className="relative w-28 h-28 flex items-center justify-center rounded-full bg-slate-900/40 border border-white/5 overflow-hidden shadow-2xl">
+                    <div className="relative w-40 h-40 flex items-center justify-center rounded-full bg-slate-900/40 border border-white/5 overflow-hidden shadow-2xl">
                       {activePlayer.image ? (
                         <img 
                           src={activePlayer.image} 
@@ -298,11 +261,11 @@ export function Dashboard({ stats, budget, squad = [] }) {
                           className="w-full h-full object-cover object-top scale-105 filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.6)]"
                         />
                       ) : (
-                        <span className="text-5xl opacity-10">👤</span>
+                        <span className="text-6xl opacity-10">👤</span>
                       )}
                     </div>
-                    <div className="text-center mt-2">
-                      <h4 className="text-sm font-extrabold text-white">{activePlayer.name}</h4>
+                    <div className="text-center mt-3">
+                      <h4 className="text-base font-extrabold text-white">{activePlayer.name}</h4>
                       <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest mt-0.5">
                         {activePlayer.pos} · {CLUB.shortName}
                       </p>
