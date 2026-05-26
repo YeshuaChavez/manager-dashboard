@@ -255,59 +255,61 @@ export function Dashboard({ stats, budget, squad = [] }) {
               )}
             </div>
 
-            {/* Navigation Chevrons */}
-            {featuredPlayers.length > 1 && (
-              <>
-                <button 
-                  onClick={prevPlayer}
-                  className="absolute left-3 top-[42%] -translate-y-1/2 z-20 text-white/40 hover:text-white transition-colors bg-white/5 border border-white/5 hover:bg-white/10 p-1.5 rounded-full backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <button 
-                  onClick={nextPlayer}
-                  className="absolute right-3 top-[42%] -translate-y-1/2 z-20 text-white/40 hover:text-white transition-colors bg-white/5 border border-white/5 hover:bg-white/10 p-1.5 rounded-full backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </>
-            )}
+            {/* Animated Player Avatar Area Wrapper */}
+            <div className="relative w-full group/avatar-nav">
+              {/* Navigation Chevrons (Centered on the avatar wrapper) */}
+              {featuredPlayers.length > 1 && (
+                <>
+                  <button 
+                    onClick={prevPlayer}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 z-20 text-white/40 hover:text-white transition-colors bg-white/5 border border-white/5 hover:bg-white/10 p-1.5 rounded-full backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <button 
+                    onClick={nextPlayer}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 z-20 text-white/40 hover:text-white transition-colors bg-white/5 border border-white/5 hover:bg-white/10 p-1.5 rounded-full backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </>
+              )}
 
-            {/* Animated Player Avatar Area */}
-            <div className="h-44 relative overflow-hidden w-full flex items-center justify-center my-2">
-              <AnimatePresence custom={direction} mode="wait">
-                <motion.div
-                  key={activePlayer.id || activePlayer.name}
-                  custom={direction}
-                  variants={slideVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{
-                    x: { type: "spring", stiffness: 300, damping: 30 },
-                    opacity: { duration: 0.25 }
-                  }}
-                  className="absolute inset-0 flex flex-col items-center justify-center"
-                >
-                  <div className="relative w-28 h-28 flex items-center justify-center rounded-full bg-slate-900/40 border border-white/5 overflow-hidden shadow-2xl">
-                    {activePlayer.image ? (
-                      <img 
-                        src={activePlayer.image} 
-                        alt={activePlayer.name} 
-                        className="w-full h-full object-cover object-top scale-105 filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.6)]"
-                      />
-                    ) : (
-                      <span className="text-5xl opacity-10">👤</span>
-                    )}
-                  </div>
-                  <div className="text-center mt-2">
-                    <h4 className="text-sm font-extrabold text-white">{activePlayer.name}</h4>
-                    <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest mt-0.5">
-                      {activePlayer.pos} · {CLUB.shortName}
-                    </p>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
+              <div className="h-44 relative overflow-hidden w-full flex items-center justify-center my-2">
+                <AnimatePresence custom={direction} mode="wait">
+                  <motion.div
+                    key={activePlayer.id || activePlayer.name}
+                    custom={direction}
+                    variants={slideVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{
+                      x: { type: "spring", stiffness: 300, damping: 30 },
+                      opacity: { duration: 0.25 }
+                    }}
+                    className="absolute inset-0 flex flex-col items-center justify-center"
+                  >
+                    <div className="relative w-28 h-28 flex items-center justify-center rounded-full bg-slate-900/40 border border-white/5 overflow-hidden shadow-2xl">
+                      {activePlayer.image ? (
+                        <img 
+                          src={activePlayer.image} 
+                          alt={activePlayer.name} 
+                          className="w-full h-full object-cover object-top scale-105 filter drop-shadow-[0_8px_16px_rgba(0,0,0,0.6)]"
+                        />
+                      ) : (
+                        <span className="text-5xl opacity-10">👤</span>
+                      )}
+                    </div>
+                    <div className="text-center mt-2">
+                      <h4 className="text-sm font-extrabold text-white">{activePlayer.name}</h4>
+                      <p className="text-[10px] text-emerald-400 font-bold uppercase tracking-widest mt-0.5">
+                        {activePlayer.pos} · {CLUB.shortName}
+                      </p>
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
             </div>
 
             {/* Radar Chart (Stays mounted, morphs polygon points smoothly) */}
