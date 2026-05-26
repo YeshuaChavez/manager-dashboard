@@ -1,20 +1,23 @@
-# Manager Dashboard
+# Football Manager Dashboard - FC Barcelona Edition
 
-An interactive Football Manager Dashboard built using React, Vite, Framer Motion, and Tailwind CSS. This application allows users to manage their football team squad, formations, tactics, transfers, and matches in real-time.
+An interactive, high-fidelity Football Manager Dashboard built using React, Vite, Framer Motion, and Tailwind CSS. This application serves as a real-time command center to manage team rosters, adjust tactics, execute transfers, and simulate matches.
 
-## Features
+## Key Features
 
-- **Squad Management**: Select formations, view player cards with dynamic FUT card designs based on ratings, and inspect individual stats.
-- **Interactive Transfer Market**: Buy and sell players. Sort market players by market price and valuation (OVR rating) with easy-to-use toggle controls.
-- **Match Simulation**: Play matches with live simulation events and stats tracking.
-- **Finances**: Track budget and execute smart transfers.
-- **Morale and Performance**: Monitor team chemistry, performance stats, and monthly history.
+- **FC Barcelona Identity**: Pre-configured with the official squad (Ter Stegen, Araujo, Pedri, de Jong, Raphinha, Lewandowski, Lamine Yamal, etc.), Hansi Flick as manager, and the Spotify Camp Nou stadium.
+- **Dashboard Command Center (Cross-Navigation)**: Integrated shortcuts on all stats cards. Clicking on cards smoothly navigates you to their respective views (e.g., Next Match goes to Match Simulation, Budget goes to Transfers, played stats go to League table).
+- **AI-Assisted Player Report**: A premium featured card rotating squad stars with custom-cropped portraits. Features Framer Motion slide transitions and a morphing Radar Chart that bends dynamically between players' attributes.
+- **Tactical Pitch Controls**: An interactive tactical chalkboard supporting customized formations, alongside continuous morale and pressing intensity sliders integrated into the pitch margins.
+- **Detailed Player Profiles**: Click on any player in the roster or transfer market to open a premium glassmorphic modal with detailed season stats (goals, assists, cards) and a Recharts line chart of their recent match form.
+- **GK-Specific FUT Cards**: Automatically maps specialized Goalkeeper statistics (DIV, HAN, KIC, REF, SPD, POS) instead of outfield player attributes on both player cards and charts when a player's position is GK.
+- **Realistic Match Simulator**: A real-time match events timeline and net visualizer showing goal points, optimized with React hooks to simulate realistic match scores (e.g., 2-1, 1-0).
 
 ## Technology Stack
 
 - **Framework**: React (Vite)
-- **Styling**: Tailwind CSS
-- **Animations**: Framer Motion
+- **Styling**: Tailwind CSS & Glassmorphism design system
+- **Animations**: Framer Motion (for modal springs and slider transitions)
+- **Data Visualization**: Recharts (LineChart, AreaChart, BarChart, and RadarChart)
 - **Icons**: Lucide React
 
 ## Getting Started

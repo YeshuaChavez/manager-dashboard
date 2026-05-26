@@ -5,7 +5,7 @@ export const CLUB = {
   league: "La Liga",
   position: 1,
   budget: 124500000,
-  season: "2024/25",
+  season: "2025/26",
   manager: "Hansi Flick",
   stadium: "Spotify Camp Nou",
   fans: "85400",

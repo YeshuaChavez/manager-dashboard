@@ -1,11 +1,11 @@
-﻿export const CLUB = {
+export const CLUB = {
   name: "Real Madrid CF",
   shortName: "RMA",
   badge: "âšª",
   league: "La Liga",
   position: 1,
   budget: 124500000,
-  season: "2024/25",
+  season: "2025/26",
   manager: "Carlos Ancelotti",
   stadium: "Santiago BernabÃ©u",
   fans: "81044",
