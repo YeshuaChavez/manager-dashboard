@@ -219,7 +219,7 @@ export function Dashboard({ stats, budget, squad = [] }) {
 
               {/* Player Quick Select Badges */}
               {featuredPlayers.length > 1 && (
-                <div className="flex items-center justify-center gap-2.5 my-3 pb-2.5 border-b border-white/5 overflow-x-auto no-scrollbar">
+                <div className="flex items-center justify-center gap-2.5 my-2 px-4 py-2 border-b border-white/5 overflow-x-auto no-scrollbar">
                   {featuredPlayers.map((player, idx) => {
                     const isActive = featuredIdx === idx;
                     return (
