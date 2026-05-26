@@ -104,41 +104,42 @@ export function League() {
           </GlassCard>
         </motion.div>
 
-        {/* Results Distribution */}
         <motion.div variants={itemVariants}>
-          <GlassCard className="p-5 h-full">
+          <GlassCard className="p-5 h-full flex flex-col">
             <h3 className="text-xs font-bold mb-4 text-white/50 uppercase tracking-widest">
               Distribución de Resultados
             </h3>
-            <ResponsiveContainer width="100%" height={180}>
-              <BarChart 
-                layout="vertical"
-                data={[
-                  { name: "Victorias (V)", value: INITIAL_STATS.wins }, 
-                  { name: "Empates (E)", value: INITIAL_STATS.draws }, 
-                  { name: "Derrotas (D)", value: INITIAL_STATS.losses }
-                ]}
-                margin={{ top: 10, right: 15, left: -10, bottom: 5 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={true} horizontal={false} />
-                <XAxis type="number" tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 10 }} axisLine={false} tickLine={false} />
-                <YAxis dataKey="name" type="category" width={80} tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 10 }} axisLine={false} tickLine={false} />
-                <Tooltip 
-                  contentStyle={{ background: "#090d16", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12 }} 
-                  labelStyle={{ color: "#fff" }}
-                  itemStyle={{ color: "#fff" }}
-                />
-                <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={20}>
-                  {[
-                    { fill: "#10b981" }, 
-                    { fill: "#f59e0b" }, 
-                    { fill: "#ef4444" }
-                  ].map((c, i) => (
-                    <Cell key={i} fill={c.fill} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+            <div className="flex-1 w-full min-h-[220px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart 
+                  layout="vertical"
+                  data={[
+                    { name: "Victorias (V)", value: INITIAL_STATS.wins }, 
+                    { name: "Empates (E)", value: INITIAL_STATS.draws }, 
+                    { name: "Derrotas (D)", value: INITIAL_STATS.losses }
+                  ]}
+                  margin={{ top: 10, right: 15, left: -10, bottom: 5 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={true} horizontal={false} />
+                  <XAxis type="number" tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 10 }} axisLine={false} tickLine={false} />
+                  <YAxis dataKey="name" type="category" width={80} tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 10 }} axisLine={false} tickLine={false} />
+                  <Tooltip 
+                    contentStyle={{ background: "#090d16", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12 }} 
+                    labelStyle={{ color: "#fff" }}
+                    itemStyle={{ color: "#fff" }}
+                  />
+                  <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={20}>
+                    {[
+                      { fill: "#10b981" }, 
+                      { fill: "#f59e0b" }, 
+                      { fill: "#ef4444" }
+                    ].map((c, i) => (
+                      <Cell key={i} fill={c.fill} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </GlassCard>
         </motion.div>
         
