@@ -5,7 +5,10 @@ import { PlayerCard } from "../components/UI/PlayerCard";
 import { GlassCard } from "../components/UI/GlassCard";
 import { RatingBadge } from "../components/UI/RatingBadge";
 import { fmt } from "../utils/format";
-import { Search, ArrowUpRight, ArrowDownLeft, ArrowUpDown } from "lucide-react";
+import { Search, ArrowUpRight, ArrowDownLeft, ArrowUpDown, X, Activity, Award, AlertTriangle, ShieldAlert } from "lucide-react";
+import {
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+} from "recharts";
 
 export function Transfers({ squad, setSquad, bench, setBench, budget, setBudget, toast }) {
   const [search, setSearch] = useState("");
@@ -74,6 +77,22 @@ export function Transfers({ squad, setSquad, bench, setBench, budget, setBudget,
     setMarket(m => [...m, { ...player, club: CLUB.shortName }]);
     toast(`💰 ${player.name} vendido por ${fmt(sellPrice)}`, "success");
     setModal(null);
+  };
+
+  const getPlayerForm = (player) => {
+    if (player.form) return player.form;
+    const base = Math.max(5, Math.min(9, Math.round(player.rating / 10)));
+    return [base, base - 1, base, base + 1, base].map(v => Math.max(4, Math.min(10, v)));
+  };
+
+  const getPlayerYellowCards = (player) => {
+    if (player.yellowCards !== undefined) return player.yellowCards;
+    return Math.floor((player.id * 7) % 5);
+  };
+
+  const getPlayerRedCards = (player) => {
+    if (player.redCards !== undefined) return player.redCards;
+    return player.id % 13 === 0 ? 1 : 0;
   };
 
   return (
@@ -204,7 +223,6 @@ export function Transfers({ squad, setSquad, bench, setBench, budget, setBudget,
       <AnimatePresence>
         {modal && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop */}
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -219,15 +237,23 @@ export function Transfers({ squad, setSquad, bench, setBench, budget, setBudget,
               animate={{ scale: 1, opacity: 1, rotateX: 0 }}
               exit={{ scale: 0.9, opacity: 0, rotateX: 20 }}
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              className="relative w-full max-w-2xl rounded-3xl border border-white/10 p-6 flex flex-col md:flex-row gap-6 shadow-2xl items-center" 
+              className="relative w-full max-w-3xl rounded-3xl border border-white/10 p-6 flex flex-col md:flex-row gap-6 shadow-2xl items-center" 
               style={{ background: "#060a10", transformPerspective: 1000 }}
               onClick={e => e.stopPropagation()}
             >
+              {/* Close Button */}
+              <button 
+                onClick={() => setModal(null)}
+                className="absolute top-4 right-4 text-white/40 hover:text-white transition-colors p-1.5 rounded-lg bg-white/5 border border-white/5 z-10"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
               {/* Left Column FUT card */}
               <PlayerCard player={modal} showStats={true} className="flex-shrink-0" />
 
               {/* Right Column details */}
-              <div className="flex-1 flex flex-col justify-between h-96 w-full text-left">
+              <div className="flex-1 flex flex-col justify-between w-full text-left">
                 <div>
                   <span className="text-[9px] bg-blue-500/10 border border-blue-500/20 text-blue-400 font-black uppercase tracking-widest px-2 py-0.5 rounded-md">
                     {modal.action === "sell" ? "Oferta Recibida" : "Detalle de Contrato"}
@@ -236,47 +262,86 @@ export function Transfers({ squad, setSquad, bench, setBench, budget, setBudget,
                   <h2 className="text-2xl font-black text-white mt-2 uppercase">{modal.name}</h2>
                   <p className="text-xs text-white/40 mt-1">{modal.club || CLUB.shortName} · {modal.age} años · {modal.pos}</p>
                   
-                  {/* Stats list */}
-                  <div className="grid grid-cols-2 gap-3 mt-5">
+                  {/* Detailed season stats */}
+                  <div className="grid grid-cols-4 gap-2.5 mt-5">
                     {[
-                      { l: "Valor de Mercado", v: fmt(modal.action === "sell" ? Math.floor(modal.value * 0.85) : modal.value), color: "#10b981" },
-                      { l: "Salario Esperado", v: fmt(modal.wage || 180000) + "/s", color: "#3b82f6" },
-                      { l: "Nacionalidad", v: modal.nat + " Nacional", color: "#94a3b8" },
-                      { l: "Media General", v: modal.rating + " OVR", color: "#f59e0b" },
+                      { l: "Goles", v: modal.goals || 0, color: "#10b981", icon: Award },
+                      { l: "Asistencias", v: modal.assists || 0, color: "#3b82f6", icon: Activity },
+                      { l: "T. Amarillas", v: getPlayerYellowCards(modal), color: "#fbbf24", icon: AlertTriangle },
+                      { l: "T. Rojas", v: getPlayerRedCards(modal), color: "#ef4444", icon: ShieldAlert },
                     ].map((s, idx) => (
-                      <div key={idx} className="p-3 rounded-xl bg-white/5 border border-white/5">
-                        <div className="text-[10px] text-white/30 mb-0.5 font-bold uppercase">{s.l}</div>
+                      <div key={idx} className="p-2.5 rounded-xl bg-white/5 border border-white/5 text-center">
+                        <div className="flex justify-center mb-1">
+                          <s.icon className="w-3.5 h-3.5" style={{ color: s.color }} />
+                        </div>
+                        <div className="text-[9px] text-white/30 mb-0.5 font-bold uppercase truncate">{s.l}</div>
                         <div className="text-sm font-extrabold" style={{ color: s.color }}>{s.v}</div>
                       </div>
                     ))}
                   </div>
 
-                  <p className="text-xs text-white/40 mt-6 leading-relaxed">
-                    {modal.action === "sell" 
-                      ? "Confirmar la venta del jugador al mercado por un 85% de su valor comercial. Esta acción liberará espacio en la plantilla y cargará el saldo al presupuesto de fichajes." 
-                      : "Al concretar el fichaje, el valor de mercado del jugador se descontará del presupuesto y se incorporará automáticamente a la alineación táctica."}
-                  </p>
+                  {/* Form Chart */}
+                  <div className="mt-5">
+                    <h4 className="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-2.5">
+                      Rendimiento en los Últimos 5 Partidos (Forma)
+                    </h4>
+                    <div className="w-full bg-white/5 border border-white/5 rounded-2xl p-3 h-36">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <LineChart 
+                          data={getPlayerForm(modal).map((f, idx) => ({
+                            partido: `P${idx + 1}`,
+                            rendimiento: f
+                          }))}
+                          margin={{ top: 5, right: 10, left: -25, bottom: 0 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
+                          <XAxis dataKey="partido" tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 9 }} axisLine={false} tickLine={false} />
+                          <YAxis domain={[0, 10]} ticks={[2, 4, 6, 8, 10]} tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 9 }} axisLine={false} tickLine={false} />
+                          <Tooltip 
+                            contentStyle={{ background: "#090d16", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, fontSize: 10 }}
+                            labelStyle={{ color: "#fff" }}
+                            itemStyle={{ color: "#60a5fa" }}
+                          />
+                          <Line 
+                            type="monotone" 
+                            dataKey="rendimiento" 
+                            name="Calificación"
+                            stroke="#3b82f6" 
+                            strokeWidth={3} 
+                            dot={{ fill: "#3b82f6", strokeWidth: 0, r: 4 }}
+                            activeDot={{ r: 6, strokeWidth: 0 }}
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Additional Info / Actions */}
+                <div className="mt-4 flex gap-3 text-[10px] text-white/40 justify-between items-center border-t border-white/5 pt-3">
+                  <span>Valor: <strong className="text-emerald-400 font-extrabold">{fmt(modal.action === "sell" ? Math.floor(modal.value * 0.85) : modal.value)}</strong></span>
+                  <span>Sueldo: <strong className="text-blue-400 font-extrabold">{fmt(modal.wage || 180000)}/sem</strong></span>
                 </div>
 
                 {/* Confirm / Cancel buttons */}
-                <div className="flex gap-3 mt-6">
+                <div className="flex gap-3 mt-4">
                   <button 
                     onClick={() => setModal(null)} 
-                    className="flex-1 py-3 rounded-xl text-xs font-bold bg-white/5 border border-white/5 hover:bg-white/10 text-white/50 hover:text-white uppercase transition-all"
+                    className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-white/5 border border-white/5 hover:bg-white/10 text-white/50 hover:text-white uppercase transition-all"
                   >
                     Volver
                   </button>
                   {modal.action === "sell" ? (
                     <button 
                       onClick={() => sellPlayer(modal)} 
-                      className="flex-1 py-3 rounded-xl text-xs font-black bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white uppercase transition-all"
+                      className="flex-1 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white uppercase transition-all"
                     >
                       Confirmar Venta
                     </button>
                   ) : (
                     <button 
                       onClick={() => buyPlayer(modal)} 
-                      className="flex-1 py-3 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white uppercase transition-all"
+                      className="flex-1 py-2.5 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white uppercase transition-all"
                     >
                       Confirmar Fichaje
                     </button>
