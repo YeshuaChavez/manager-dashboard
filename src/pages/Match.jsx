@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { OPPONENTS, CLUB } from "../constants/mockData";
 import { GlassCard } from "../components/UI/GlassCard";
@@ -20,7 +20,7 @@ export function Match({ squad, bench, stats, setStats, toast }) {
   const [heatmapPoints, setHeatmapPoints] = useState([]);
 
   const intervalRef = useRef(null);
-  const homeNames = squad.map(p => p.name.split(" ").pop());
+  const homeNames = useMemo(() => squad.map(p => p.name.split(" ").pop()), [squad]);
 
   const addEvent = useCallback((min) => {
     const rand = Math.random();
@@ -105,9 +105,12 @@ export function Match({ squad, bench, stats, setStats, toast }) {
     setPossession({ home: 45 + Math.floor(Math.random() * 12), away: 55 - Math.floor(Math.random() * 12) });
   }, [homeNames, opponent]);
 
+  const lastProcessedMinute = useRef(-1);
+
   const startMatch = () => {
     setPhase("live");
     setMinute(0);
+    lastProcessedMinute.current = -1;
     setScore({ home: 0, away: 0 });
     setEvents([]);
     setShotLocations([]);
@@ -127,7 +130,8 @@ export function Match({ squad, bench, stats, setStats, toast }) {
   };
 
   useEffect(() => {
-    if (phase === "live" && minute > 0 && minute % 3 === 0) {
+    if (phase === "live" && minute > 0 && minute % 3 === 0 && lastProcessedMinute.current !== minute) {
+      lastProcessedMinute.current = minute;
       addEvent(minute);
     }
   }, [minute, phase, addEvent]);

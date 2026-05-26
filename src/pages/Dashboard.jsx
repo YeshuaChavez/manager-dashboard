@@ -12,7 +12,7 @@ import { StatBar } from "../components/UI/StatBar";
 import { GoalTarget } from "../components/UI/GoalTarget";
 import { Heatmap } from "../components/UI/Heatmap";
 
-export function Dashboard({ stats, budget, squad = [] }) {
+export function Dashboard({ stats, budget, squad = [], onNavigate }) {
   const nextOpponent = OPPONENTS[0]; // FC Barcelona
 
   const CARDS = [
@@ -140,7 +140,12 @@ export function Dashboard({ stats, budget, squad = [] }) {
       {/* Stat Cards */}
       <motion.div variants={itemVariants} className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
         {CARDS.map((c, i) => (
-          <GlassCard key={i} className="p-4 relative overflow-hidden group hover:scale-[1.03]" glow={c.color}>
+          <GlassCard 
+            key={i} 
+            className="p-4 relative overflow-hidden group hover:scale-[1.03] cursor-pointer hover:border-white/10 transition-all" 
+            glow={c.color}
+            onClick={() => onNavigate && onNavigate(c.label === "Goles Marcados" ? "stats" : "league")}
+          >
             <div className="mb-2">
               {React.createElement(c.icon, { className: "w-6 h-6", style: { color: c.color } })}
             </div>
@@ -185,7 +190,11 @@ export function Dashboard({ stats, budget, squad = [] }) {
           </GlassCard>
 
           {/* Next Match Card */}
-          <GlassCard className="p-5 relative overflow-hidden" glow="#8b5cf6">
+          <GlassCard 
+            className="p-5 relative overflow-hidden cursor-pointer hover:scale-[1.02] hover:border-purple-500/20 transition-all" 
+            glow="#8b5cf6"
+            onClick={() => onNavigate && onNavigate("match")}
+          >
             <div className="text-xs text-white/40 mb-3 uppercase font-bold tracking-wider">Próximo Partido</div>
             <div className="flex items-center justify-between relative z-10">
               <div className="text-center">
@@ -207,7 +216,10 @@ export function Dashboard({ stats, budget, squad = [] }) {
           </GlassCard>
 
           {/* Morale and status */}
-          <GlassCard className="p-5">
+          <GlassCard 
+            className="p-5 cursor-pointer hover:scale-[1.02] hover:border-emerald-500/20 transition-all"
+            onClick={() => onNavigate && onNavigate("tactics")}
+          >
             <div className="text-xs text-white/40 mb-4 uppercase font-bold tracking-wider">Estado del Plantel</div>
             <div className="space-y-3.5">
               <StatBar label="Moral General" value={stats.morale} color="#10b981" />
@@ -335,7 +347,10 @@ export function Dashboard({ stats, budget, squad = [] }) {
           <Heatmap />
 
           {/* Budget Breakdown */}
-          <GlassCard className="p-5">
+          <GlassCard 
+            className="p-5 cursor-pointer hover:scale-[1.02] hover:border-emerald-500/20 transition-all"
+            onClick={() => onNavigate && onNavigate("transfers")}
+          >
             <div className="text-xs text-white/40 mb-2 uppercase font-bold tracking-wider">PRESUPUESTO DISPONIBLE</div>
             <div className="text-3xl font-black mb-3 text-emerald-400 tracking-tight">
               <AnimNum value={budget} prefix="€" />
