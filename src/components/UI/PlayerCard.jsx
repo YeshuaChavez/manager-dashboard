@@ -14,6 +14,25 @@ export function PlayerCard({ player, className = "", onClick, showStats = true }
   const def = stats.def || 50;
   const phy = stats.phy || 70;
 
+  const isGK = pos === "GK";
+  const statLabels = isGK
+    ? [
+        { l: "DIV", v: pac },
+        { l: "HAN", v: sho },
+        { l: "KIC", v: pas },
+        { l: "REF", v: dri },
+        { l: "SPD", v: def },
+        { l: "POS", v: phy },
+      ]
+    : [
+        { l: "PAC", v: pac },
+        { l: "SHO", v: sho },
+        { l: "PAS", v: pas },
+        { l: "DRI", v: dri },
+        { l: "DEF", v: def },
+        { l: "PHY", v: phy },
+      ];
+
   // Determine card style based on rating (Gold, Silver, Bronze)
   const isGold = rating >= 88;
   const isSilver = rating >= 82 && rating < 88;
@@ -100,14 +119,7 @@ export function PlayerCard({ player, className = "", onClick, showStats = true }
 
         {showStats && (
           <div className="grid grid-cols-6 gap-0.5 text-center mt-2">
-            {[
-              { l: "PAC", v: pac },
-              { l: "SHO", v: sho },
-              { l: "PAS", v: pas },
-              { l: "DRI", v: dri },
-              { l: "DEF", v: def },
-              { l: "PHY", v: phy },
-            ].map((s, idx) => (
+            {statLabels.map((s, idx) => (
               <div key={idx} className="flex flex-col">
                 <span className="text-[9px] font-bold text-white/40">{s.l}</span>
                 <span className="text-xs font-extrabold text-white">{s.v}</span>

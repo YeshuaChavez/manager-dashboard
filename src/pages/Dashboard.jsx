@@ -49,6 +49,17 @@ export function Dashboard({ stats, budget, squad = [] }) {
 
   const getRadarData = (player) => {
     const s = player.stats || {};
+    if (player.pos === "GK") {
+      // Goalkeeper stats mapping: Defensa is a combination of diving, handling, and reflexes
+      return [
+        { attr: "Ataque", value: 15 },
+        { attr: "Defensa", value: Math.round(((s.pac || 85) + (s.sho || 85) + (s.dri || 85)) / 3) },
+        { attr: "Pase", value: s.pas || 75 },
+        { attr: "Regate", value: 22 },
+        { attr: "Físico", value: s.phy || 75 },
+        { attr: "Velocidad", value: s.def || 50 }, // For GK, def represents SPD (Speed)
+      ];
+    }
     return [
       { attr: "Ataque", value: s.sho || 75 },
       { attr: "Defensa", value: s.def || 75 },
