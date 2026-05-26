@@ -35,14 +35,22 @@ export function Transfers({ squad, setSquad, bench, setBench, budget, setBudget,
 
   const toggleSort = (field) => {
     if (sortBy === field) {
-      if (sortDir === "desc") {
-        setSortDir("asc");
+      if (field === "value") {
+        if (sortDir === "asc") {
+          setSortDir("desc");
+        } else {
+          setSortBy(null);
+        }
       } else {
-        setSortBy(null);
+        if (sortDir === "desc") {
+          setSortDir("asc");
+        } else {
+          setSortBy(null);
+        }
       }
     } else {
       setSortBy(field);
-      setSortDir("desc");
+      setSortDir(field === "value" ? "asc" : "desc");
     }
   };
 
@@ -129,7 +137,7 @@ export function Transfers({ squad, setSquad, bench, setBench, budget, setBudget,
                 border: `1px solid ${sortBy === "value" ? "#10b98180" : "transparent"}`,
               }}>
               <ArrowUpDown className="w-3.5 h-3.5" />
-              Precio {sortBy === "value" ? (sortDir === "desc" ? "↑" : "↓") : ""}
+              Precio {sortBy === "value" ? (sortDir === "asc" ? "↓" : "↑") : ""}
             </button>
 
             {/* Sort by rating */}
