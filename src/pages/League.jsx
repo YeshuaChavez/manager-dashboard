@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+  BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from "recharts";
 import { CLUB, LEAGUE_TABLE, OPPONENTS, INITIAL_STATS } from "../constants/mockData";
 import { GlassCard } from "../components/UI/GlassCard";
@@ -111,18 +111,29 @@ export function League() {
               Distribución de Resultados
             </h3>
             <ResponsiveContainer width="100%" height={180}>
-              <BarChart data={[
-                { name: "Victorias (V)", value: INITIAL_STATS.wins, fill: "#10b981" }, 
-                { name: "Empates (E)", value: INITIAL_STATS.draws, fill: "#f59e0b" }, 
-                { name: "Derrotas (D)", value: INITIAL_STATS.losses, fill: "#ef4444" }
-              ]}>
+              <BarChart 
+                data={[
+                  { name: "Victorias (V)", value: INITIAL_STATS.wins }, 
+                  { name: "Empates (E)", value: INITIAL_STATS.draws }, 
+                  { name: "Derrotas (D)", value: INITIAL_STATS.losses }
+                ]}
+                margin={{ top: 10, right: 5, left: -20, bottom: 0 }}
+              >
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
                 <XAxis dataKey="name" tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 10 }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 10 }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={{ background: "#090d16", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12 }} />
+                <Tooltip 
+                  contentStyle={{ background: "#090d16", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12 }} 
+                  labelStyle={{ color: "#fff" }}
+                  itemStyle={{ color: "#fff" }}
+                />
                 <Bar dataKey="value" radius={[6, 6, 0, 0]}>
-                  {[{ fill: "#10b981" }, { fill: "#f59e0b" }, { fill: "#ef4444" }].map((c, i) => (
-                    <rect key={i} fill={c.fill} />
+                  {[
+                    { fill: "#10b981" }, 
+                    { fill: "#f59e0b" }, 
+                    { fill: "#ef4444" }
+                  ].map((c, i) => (
+                    <Cell key={i} fill={c.fill} />
                   ))}
                 </Bar>
               </BarChart>

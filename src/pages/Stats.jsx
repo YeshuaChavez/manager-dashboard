@@ -4,7 +4,7 @@ import {
   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from "recharts";
 import { MONTHLY_PERF, CLUB } from "../constants/mockData";
-import { Target, BarChart2, Trophy, TrendingUp } from "lucide-react";
+import { Target, BarChart2, Trophy, TrendingUp, Crown, Zap, Handshake } from "lucide-react";
 import { GlassCard } from "../components/UI/GlassCard";
 import { StatBar } from "../components/UI/StatBar";
 
@@ -111,8 +111,8 @@ export function Stats({ squad, stats }) {
         
         <motion.div variants={itemVariants}>
           <GlassCard className="p-5">
-            <h3 className="text-xs font-bold mb-4 text-white/50 uppercase tracking-widest">
-              🥇 Máximos Anotadores
+            <h3 className="text-xs font-bold mb-4 text-white/50 uppercase tracking-widest flex items-center gap-1.5">
+              <Crown className="w-4 h-4 text-amber-500" /> Máximos Anotadores
             </h3>
             <div className="space-y-1">
               {topScorers.map((p, i) => (
@@ -126,8 +126,12 @@ export function Stats({ squad, stats }) {
                     <div className="text-[10px] text-white/40">{p.pos} · {p.nat}</div>
                   </div>
                   <div className="flex gap-4 text-xs font-black">
-                    <span style={{ color: "#10b981" }}>⚽ {p.goals} G</span>
-                    <span style={{ color: "#3b82f6" }}>🎯 {p.assists} A</span>
+                    <span className="flex items-center gap-1" style={{ color: "#10b981" }}>
+                      <Target className="w-3.5 h-3.5" /> {p.goals} G
+                    </span>
+                    <span className="flex items-center gap-1" style={{ color: "#3b82f6" }}>
+                      <Handshake className="w-3.5 h-3.5" /> {p.assists} A
+                    </span>
                   </div>
                 </div>
               ))}
@@ -137,8 +141,8 @@ export function Stats({ squad, stats }) {
 
         <motion.div variants={itemVariants}>
           <GlassCard className="p-5">
-            <h3 className="text-xs font-bold mb-4 text-white/50 uppercase tracking-widest">
-              📊 Racha y Efectividad
+            <h3 className="text-xs font-bold mb-4 text-white/50 uppercase tracking-widest flex items-center gap-1.5">
+              <Zap className="w-4 h-4 text-purple-400" /> Racha y Efectividad
             </h3>
             <div className="space-y-4">
               <StatBar label="Victorias Totales" value={stats.wins} max={stats.played || 1} color="#10b981" />
